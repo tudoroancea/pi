@@ -78,6 +78,8 @@ export interface Settings {
 	defaultProvider?: string;
 	defaultModel?: string;
 	defaultThinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
+	persistModel?: boolean; // default: true
+	persistThinkingLevel?: boolean; // default: true
 	transport?: TransportSetting; // default: "sse"
 	steeringMode?: "all" | "one-at-a-time";
 	followUpMode?: "all" | "one-at-a-time";
@@ -612,6 +614,26 @@ export class SettingsManager {
 		this.globalSettings.defaultModel = modelId;
 		this.markModified("defaultProvider");
 		this.markModified("defaultModel");
+		this.save();
+	}
+
+	getPersistModel(): boolean {
+		return this.settings.persistModel ?? true;
+	}
+
+	setPersistModel(persist: boolean): void {
+		this.globalSettings.persistModel = persist;
+		this.markModified("persistModel");
+		this.save();
+	}
+
+	getPersistThinkingLevel(): boolean {
+		return this.settings.persistThinkingLevel ?? true;
+	}
+
+	setPersistThinkingLevel(persist: boolean): void {
+		this.globalSettings.persistThinkingLevel = persist;
+		this.markModified("persistThinkingLevel");
 		this.save();
 	}
 

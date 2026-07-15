@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added `persistModel` and `persistThinkingLevel` settings to keep model and thinking-level changes session-only.
+
 ## [0.70.6] - 2026-04-28
 
 ### New Features

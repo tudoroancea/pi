@@ -42,6 +42,31 @@ describe("AgentSession model and extension characterization", () => {
 				.filter((entry) => entry.type === "model_change")
 				.map((entry) => `${entry.provider}/${entry.modelId}`),
 		).toEqual([`${nextModel.provider}/${nextModel.id}`]);
+		expect(harness.settingsManager.getDefaultProvider()).toBe(nextModel.provider);
+		expect(harness.settingsManager.getDefaultModel()).toBe(nextModel.id);
+	});
+
+	it("keeps model changes session-only when model persistence is disabled", async () => {
+		const harness = await createHarness({
+			models: [
+				{ id: "faux-1", name: "One", reasoning: true },
+				{ id: "faux-2", name: "Two", reasoning: true },
+			],
+			settings: {
+				defaultProvider: "original-provider",
+				defaultModel: "original-model",
+				persistModel: false,
+			},
+		});
+		harnesses.push(harness);
+		const nextModel = harness.getModel("faux-2")!;
+
+		await harness.session.setModel(nextModel);
+
+		expect(harness.session.model?.id).toBe("faux-2");
+		expect(harness.settingsManager.getDefaultProvider()).toBe("original-provider");
+		expect(harness.settingsManager.getDefaultModel()).toBe("original-model");
+		expect(harness.sessionManager.getEntries().filter((entry) => entry.type === "model_change")).toHaveLength(1);
 	});
 
 	it("cycles through scoped models and preserves the scoped thinking preference", async () => {
@@ -76,6 +101,22 @@ describe("AgentSession model and extension characterization", () => {
 		harness.session.setThinkingLevel("high");
 		expect(harness.session.thinkingLevel).toBe("off");
 		expect(harness.session.cycleThinkingLevel()).toBeUndefined();
+	});
+
+	it("keeps thinking-level changes session-only when persistence is disabled", async () => {
+		const harness = await createHarness({
+			models: [{ id: "faux-1", reasoning: true }],
+			settings: { defaultThinkingLevel: "low", persistThinkingLevel: false },
+		});
+		harnesses.push(harness);
+
+		harness.session.setThinkingLevel("high");
+
+		expect(harness.session.thinkingLevel).toBe("high");
+		expect(harness.settingsManager.getDefaultThinkingLevel()).toBe("low");
+		expect(
+			harness.sessionManager.getEntries().filter((entry) => entry.type === "thinking_level_change"),
+		).toHaveLength(1);
 	});
 
 	it("throws when setModel is called without configured auth", async () => {

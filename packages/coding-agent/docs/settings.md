@@ -18,8 +18,12 @@ Edit directly or use `/settings` for common options.
 | `defaultProvider` | string | - | Default provider (e.g., `"anthropic"`, `"openai"`) |
 | `defaultModel` | string | - | Default model ID |
 | `defaultThinkingLevel` | string | - | `"off"`, `"minimal"`, `"low"`, `"medium"`, `"high"`, `"xhigh"` |
+| `persistModel` | boolean | `true` | Save model changes to `defaultProvider` and `defaultModel` |
+| `persistThinkingLevel` | boolean | `true` | Save thinking-level changes to `defaultThinkingLevel` |
 | `hideThinkingBlock` | boolean | `false` | Hide thinking blocks in output |
 | `thinkingBudgets` | object | - | Custom token budgets per thinking level |
+
+Set `persistModel` or `persistThinkingLevel` to `false` to keep interactive changes session-only. Model and thinking-level changes are still recorded in the current session and restored when that session is resumed.
 
 #### thinkingBudgets
 
